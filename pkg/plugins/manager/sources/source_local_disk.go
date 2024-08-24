@@ -3,6 +3,7 @@ package sources
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
@@ -51,7 +52,7 @@ func DirAsLocalSources(pluginsPath string, class plugins.Class) ([]*LocalSource,
 	// nolint:gosec
 	d, err := os.ReadDir(pluginsPath)
 	if err != nil {
-		return []*LocalSource{}, errors.New("failed to open plugins path")
+		return []*LocalSource{}, errors.New(fmt.Sprintf("failed to open plugins path: %s", pluginsPath))
 	}
 
 	var pluginDirs []string
