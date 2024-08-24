@@ -52,3 +52,78 @@ Grafana is distributed under [AGPL-3.0-only](LICENSE). For Apache-2.0 exceptions
 https://www.oldliew.com/post/mac-m1%E7%BC%96%E8%AF%91grafana%E6%BA%90%E7%A0%81%E5%B9%B6%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/
 https://www.cnblogs.com/xiaoqi/p/grafana.html
 https://blog.csdn.net/lejun_wang1984/article/details/135430858
+
+
+# golang proxy
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
+)
+
+// GrafanaProxyHandler 代理Grafana用作管理面板
+type GrafanaProxyHandler struct{}
+
+func (h *GrafanaProxyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// 获取当前用户
+	currentUser := getCurrentUserLogin()
+	if currentUser == "" {
+		return
+	}
+
+	// 创建代理请求
+	proxyURL, err := url.Parse("http://192.168.3.8:32204/") // 替换为您的Grafana URL
+	proxy := httputil.NewSingleHostReverseProxy(proxyURL)
+	fmt.Println("err", err)
+
+	// 设置用户
+	r.Header.Set("Auth", currentUser)
+	fmt.Println(">>")
+	// 执行代理请求
+	proxy.ServeHTTP(w, r)
+}
+
+func getCurrentUserLogin() string {
+	// 实现获取当前用户的逻辑
+	// 例如：从会话中获取当前用户的登录信息
+	return "admin" // 这里返回示例用户
+}
+
+func main() {
+	handler := &GrafanaProxyHandler{}
+	http.Handle("/", handler)
+	fmt.Println("Server is running at :8080")
+	http.ListenAndServe(":8080", nil)
+}
+
+```
+- grafana config
+```
+grafana.ini:
+  ## grafana Authentication can be enabled with the following values on grafana.ini
+  server:
+    root_url: "https://grafana.powerlaw.club/grafana"
+    serve_from_sub_path: true
+  security:
+    allow_embedding: true
+  # auth.anonymous:
+  #   enabled: true
+  #   org_name: Main Org.
+  #   org_role: Viewer
+  auth.proxy:
+    enabled: true
+    header_name: Auth
+    header_property: username
+    auto_sign_up: true
+    sync_ttl: 60
+    enable_login_token: true
+```
+- 隐藏侧边栏
+```
+# url 加 &kiosk=tv
+http://127.0.0.1:8080/grafana/d/pDLS-OFSk/zhu-ji-zi-yuan-jian-kong?orgId=1&kiosk=tv
+```
