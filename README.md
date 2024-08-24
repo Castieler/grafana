@@ -50,3 +50,5 @@ This project is tested with [BrowserStack](https://www.browserstack.com/)
 Grafana is distributed under [AGPL-3.0-only](LICENSE). For Apache-2.0 exceptions, see [LICENSING.md](https://github.com/grafana/grafana/blob/HEAD/LICENSING.md).
 
 https://www.oldliew.com/post/mac-m1%E7%BC%96%E8%AF%91grafana%E6%BA%90%E7%A0%81%E5%B9%B6%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/
+https://www.cnblogs.com/xiaoqi/p/grafana.html
+https://blog.csdn.net/lejun_wang1984/article/details/135430858
